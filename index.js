@@ -34,7 +34,9 @@ async function askRandomNumberQuestion(min, max) {
         console.log(chalk.redBright(`Sorry, you guessed the wrong number`));
         console.log(chalk.yellowBright(`The correct answer is ${randomNumber}\n`));
     }
-    await askForNextRound() && askRandomNumberQuestion(1, randomNumberMaxLimit * gameLogs.round);
+    await askForNextRound()
+        ? askRandomNumberQuestion(1, randomNumberMaxLimit * gameLogs.round)
+        : console.log(`\n> You are at Round ${gameLogs.round}, & you have (${gameLogs.earned_points} Points)`);
 }
 askRandomNumberQuestion(1, randomNumberMaxLimit);
 async function askForNextRound() {
