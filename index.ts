@@ -2,6 +2,8 @@
 
 import chalk from "chalk";
 import inquirer from "inquirer";
+import figlet from 'figlet';
+import gradient from 'gradient-string';
 
 const random = (min:number, max:number) => Math.floor(Math.random() * (max - min)) + min;
 
@@ -19,8 +21,8 @@ let gameLogs:TYPE_GAME_LOGS = {
 
 async function askRandomNumberQuestion(min:number, max:number){
     let randomNumber:number = random(min, max);
-    console.log(`\n> Round ${gameLogs.round} (${gameLogs.earned_points} Points)`);
-    
+    console.log(chalk.bgBlueBright(`\n> Round ${gameLogs.round} (${gameLogs.earned_points} Points)`));
+
     let answer = await inquirer.prompt({
         name: 'guessed_number',
         type: 'input',
@@ -41,7 +43,7 @@ async function askRandomNumberQuestion(min:number, max:number){
     if(randomNumber == answer.guessed_number){
         let earnedPoints = pointRate * gameLogs.round;
         console.log(chalk.greenBright(`You guessed the correct number`));
-        console.log(chalk.blueBright(`You cleared Round ${gameLogs.round++}, & earned ${earnedPoints} points\n`));
+        console.log(chalk.blueBright(`You cleared Round ${gameLogs.round++} & earned ${earnedPoints} points\n`));
         gameLogs.earned_points += earnedPoints;
     } else {
         console.log(chalk.redBright(`Sorry, you guessed the wrong number`))
@@ -49,7 +51,8 @@ async function askRandomNumberQuestion(min:number, max:number){
     }
     await askForNextRound() 
         ? askRandomNumberQuestion(1, randomNumberMaxLimit * gameLogs.round)
-        : console.log(`\n> You are at Round ${gameLogs.round}, & you have (${gameLogs.earned_points} Points)`);
+        : gameOver(chalk.bgBlueBright(`\n> You are at Round ${gameLogs.round} & you have (${gameLogs.earned_points} Points)`));
+        
 }
 askRandomNumberQuestion(1, randomNumberMaxLimit);
 
@@ -62,4 +65,12 @@ async function askForNextRound() {
         choices: ['Yes', 'No']
     });
     return answer.is_continue == 'Yes';
+}
+
+async function gameOver(message:string) {
+    figlet('Game Over', (error, data) => {
+        console.log(gradient.pastel.multiline(data));
+    });
+
+    console.log(message);
 }
